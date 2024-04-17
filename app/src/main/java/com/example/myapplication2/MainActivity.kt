@@ -125,7 +125,7 @@ fun isTablet(): Boolean {
     val screenWidthDp = configuration.screenWidthDp.dp
     val screenHeightDp = configuration.screenHeightDp.dp
     val smallestWidth = minOf(screenWidthDp, screenHeightDp)
-    return smallestWidth >= 600.dp  // Granica 600dp często jest używana do definiowania tabletu
+    return smallestWidth >= 600.dp
 }
 
 @Composable
