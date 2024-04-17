@@ -82,8 +82,16 @@ import androidx.compose.material.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.ui.unit.dp
 import kotlin.system.measureTimeMillis
-
-
+import androidx.compose.runtime.*
+import androidx.compose.material.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
+import androidx.compose.runtime.*
+import androidx.compose.material.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.unit.dp
+import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -110,8 +118,6 @@ fun isPortrait(): Boolean {
     val configuration = LocalConfiguration.current
     return configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
 }
-
-
 
 @Composable
 fun isTablet(): Boolean {
@@ -183,36 +189,33 @@ fun AppNavigation() {
     }
 }
 
-
-
 @Composable
 fun DetailsScreen(itemId: String) {
     var isRunning by remember { mutableStateOf(false) }
-    var elapsed by remember { mutableStateOf(0L) }
     var startTime by remember { mutableStateOf(0L) }
+    var elapsed by remember { mutableStateOf(0L) }
 
     LaunchedEffect(isRunning) {
-        while (isRunning) {
-            elapsed = System.currentTimeMillis() - startTime
-            Thread.sleep(10)
+        if (isRunning) {
+            startTime = System.nanoTime() - elapsed
+            while (isRunning) {
+                elapsed = System.nanoTime() - startTime
+                delay(10L)
+            }
         }
     }
-
     Column(
         modifier = Modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Text("Details for item $itemId")
         Spacer(modifier = Modifier.height(16.dp))
-        Text("Elapsed time: ${elapsed / 1000} seconds")
+        Text("Elapsed time: ${elapsed / 1_000_000_000} seconds and ${(elapsed / 1_000_000) % 1000} milliseconds")
         Spacer(modifier = Modifier.height(16.dp))
         Row {
             Button(
                 onClick = {
-                    if (!isRunning) {
-                        isRunning = true
-                        startTime = System.currentTimeMillis() - elapsed
-                    }
+                    isRunning = true
                 },
                 enabled = !isRunning
             ) {
@@ -238,7 +241,6 @@ fun DetailsScreen(itemId: String) {
         }
     }
 }
-
 
 
 val customStyle = TextStyle(
