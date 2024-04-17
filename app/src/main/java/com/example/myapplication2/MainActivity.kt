@@ -70,6 +70,7 @@ import androidx.compose.material.icons.filled.Info
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
@@ -124,15 +125,26 @@ fun ResponsiveList(data: List<String>, onItemSelect: (String) -> Unit) {
 @Composable
 fun ListItem(text: String, onClick: () -> Unit) {
     Card(
-        modifier = Modifier.padding(8.dp).fillMaxWidth(),
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
         elevation = 4.dp
     ) {
-        Row(verticalAlignment = Alignment.CenterVertically) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+        ) {
             Text(
                 text = text,
-                color = Color.Black,
-                fontSize = 16.sp
+                modifier = Modifier
+                    .weight(1f)
+                    .padding(start = 8.dp),
+                fontSize = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                color = Color.Black
             )
+            Spacer(Modifier.weight(1f))
             IconButton(onClick = onClick) {
                 Icon(Icons.Filled.Info, contentDescription = "Details")
             }
