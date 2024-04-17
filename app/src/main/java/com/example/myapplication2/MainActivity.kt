@@ -76,6 +76,14 @@ import androidx.compose.ui.graphics.Paint
 import androidx.compose.ui.graphics.drawscope.DrawScope
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import android.content.res.Configuration
+import androidx.compose.runtime.*
+import androidx.compose.material.*
+import androidx.compose.foundation.layout.*
+import androidx.compose.ui.unit.dp
+import kotlin.system.measureTimeMillis
+
+
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -103,11 +111,21 @@ fun isPortrait(): Boolean {
     return configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
 }
 
+
+
 @Composable
 fun isTablet(): Boolean {
     val configuration = LocalConfiguration.current
-    val screenWidth = configuration.screenWidthDp
-    return screenWidth > 600
+    val screenWidthDp = configuration.screenWidthDp.dp
+    val screenHeightDp = configuration.screenHeightDp.dp
+    val smallestWidth = minOf(screenWidthDp, screenHeightDp)
+    return smallestWidth >= 600.dp  // Granica 600dp często jest używana do definiowania tabletu
+}
+
+@Composable
+fun isLandscape(): Boolean {
+    val configuration = LocalConfiguration.current
+    return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 }
 
 @Composable
@@ -165,20 +183,63 @@ fun AppNavigation() {
     }
 }
 
+
+
 @Composable
 fun DetailsScreen(itemId: String) {
-    val textStyle = TextStyle(
-        fontSize = 18.sp,
-        //fontWeight = FontWeight.Bold
-    )
+    var isRunning by remember { mutableStateOf(false) }
+    var elapsed by remember { mutableStateOf(0L) }
+    var startTime by remember { mutableStateOf(0L) }
 
-    Text(
-        text = "Details for item $itemId",
-        style = textStyle,
-        color = Color.Blue,
-        modifier = Modifier.padding(16.dp)
-    )
+    LaunchedEffect(isRunning) {
+        while (isRunning) {
+            elapsed = System.currentTimeMillis() - startTime
+            Thread.sleep(10)
+        }
+    }
+
+    Column(
+        modifier = Modifier.padding(16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+        Text("Details for item $itemId")
+        Spacer(modifier = Modifier.height(16.dp))
+        Text("Elapsed time: ${elapsed / 1000} seconds")
+        Spacer(modifier = Modifier.height(16.dp))
+        Row {
+            Button(
+                onClick = {
+                    if (!isRunning) {
+                        isRunning = true
+                        startTime = System.currentTimeMillis() - elapsed
+                    }
+                },
+                enabled = !isRunning
+            ) {
+                Text("Start")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = {
+                    isRunning = false
+                }
+            ) {
+                Text("Stop")
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            Button(
+                onClick = {
+                    isRunning = false
+                    elapsed = 0L
+                }
+            ) {
+                Text("Reset")
+            }
+        }
+    }
 }
+
+
 
 val customStyle = TextStyle(
     color = Color.Blue,
