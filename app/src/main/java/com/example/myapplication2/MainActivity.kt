@@ -4,93 +4,42 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
-import com.example.myapplication2.ui.theme.MyApplication2Theme
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
-import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.material.Card
-import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.unit.dp
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
 import com.main_view_model.myapplication2.view_models.*
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Info
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.graphics.Color
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.ui.Alignment
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.compose.composable
-import androidx.navigation.NavType
 import androidx.compose.material.Text
-import androidx.compose.foundation.layout.Row
-import androidx.compose.material.Card
-import androidx.compose.material.Text
-import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
-import androidx.compose.material.Text
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Card
-import androidx.compose.material.Icon
-import androidx.compose.material.IconButton
-import androidx.compose.material.Text
-import androidx.compose.ui.unit.dp
-import androidx.compose.material.icons.filled.Info
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.ui.geometry.Rect
-import androidx.compose.ui.graphics.Paint
-import androidx.compose.ui.graphics.drawscope.DrawScope
-import androidx.compose.ui.unit.TextUnit
-import androidx.compose.ui.unit.dp
 import android.content.res.Configuration
 import androidx.compose.runtime.*
 import androidx.compose.material.*
 import androidx.compose.foundation.layout.*
-import androidx.compose.ui.unit.dp
-import kotlin.system.measureTimeMillis
-import androidx.compose.runtime.*
-import androidx.compose.material.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.ui.unit.dp
-import kotlinx.coroutines.delay
-import androidx.compose.runtime.*
-import androidx.compose.material.*
-import androidx.compose.foundation.layout.*
-import androidx.compose.ui.unit.dp
+import androidx.compose.material.icons.filled.Camera
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
@@ -111,6 +60,11 @@ fun MyComposeApp(navController: NavHostController) {
     ResponsiveList(data = items, onItemSelect = { itemId ->
         navController.navigate("details/$itemId")
     })
+    FloatingActionButton(
+        onClick = { /* Do something! */ },
+        content = { Icon(Icons.Filled.Camera, contentDescription = "Details") },
+        elevation = FloatingActionButtonDefaults.elevation(8.dp)
+    )
 }
 
 @Composable
@@ -190,6 +144,36 @@ fun AppNavigation() {
 }
 
 @Composable
+fun MyScreen() {
+    Scaffold(
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { /* Do something! */ },
+                content = { Icon(Icons.Filled.Camera, contentDescription = "Camera") },
+                elevation = FloatingActionButtonDefaults.elevation(8.dp)
+            )
+        },
+        floatingActionButtonPosition = FabPosition.End,
+        isFloatingActionButtonDocked = false
+    ) { paddingValues ->
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .padding(paddingValues)) {
+        }
+    }
+}
+
+@Composable
+fun FloatingButton(){
+    FloatingActionButton(
+        onClick = { /* Do something! */ },
+        content = { Icon(Icons.Filled.Camera, contentDescription = "Details") },
+        elevation = FloatingActionButtonDefaults.elevation(8.dp)
+    )
+    val onClick = { /* Do something */ }
+}
+
+@Composable
 fun DetailsScreen(itemId: String) {
     var isRunning by remember { mutableStateOf(false) }
     var startTime by remember { mutableStateOf(0L) }
@@ -241,7 +225,6 @@ fun DetailsScreen(itemId: String) {
         }
     }
 }
-
 
 val customStyle = TextStyle(
     color = Color.Blue,
