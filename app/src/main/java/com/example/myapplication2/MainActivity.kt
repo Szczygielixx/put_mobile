@@ -1,15 +1,14 @@
 package com.example.myapplication2
 
-import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.Image
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.dp
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -31,41 +30,31 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.compose.ui.Alignment
 import androidx.compose.material.Text
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.foundation.layout.Spacer
-import android.content.res.Configuration
 import androidx.compose.runtime.*
 import androidx.compose.material.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Camera
+import androidx.compose.ui.res.painterResource
 import kotlinx.coroutines.delay
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            //val viewModel: MainViewModel = viewModel()
-            //MyComposeApp(viewModel)
             AppNavigation()
         }
     }
 }
-/*
-@Composable
-fun openCamera() {
-    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
-    startActivity(intent)
-}
-*/
-
 @Composable
 fun MyComposeApp(navController: NavHostController) {
     val viewModel: MainViewModel = viewModel()
     val items by viewModel.items.collectAsState()
-    ResponsiveList(data = items, onItemSelect = { itemId ->
+    // Assuming you have a list of pairs of text and image resource ids
+    val itemsWithImages = items.map { it to R.drawable.poland_flag } // Replace R.drawable.sample_image with the appropriate image resource
+    ResponsiveList(data = itemsWithImages, onItemSelect = { itemId ->
         navController.navigate("details/$itemId")
     })
 
@@ -76,42 +65,21 @@ fun MyComposeApp(navController: NavHostController) {
     )
 }
 
-@Composable
-fun isPortrait(): Boolean {
-    val configuration = LocalConfiguration.current
-    return configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
-}
-@Composable
-fun isTablet(): Boolean {
-    val configuration = LocalConfiguration.current
-    val screenWidthDp = configuration.screenWidthDp.dp
-    val screenHeightDp = configuration.screenHeightDp.dp
-    val smallestWidth = minOf(screenWidthDp, screenHeightDp)
-    return smallestWidth >= 600.dp
-}
 
 @Composable
-fun isLandscape(): Boolean {
-    val configuration = LocalConfiguration.current
-    return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
-}
-
-
-
-@Composable
-fun ResponsiveList(data: List<String>, onItemSelect: (String) -> Unit) {
+fun ResponsiveList(data: List<Pair<String, Int>>, onItemSelect: (String) -> Unit) {
     LazyVerticalGrid(
         columns = GridCells.Fixed(1),
         contentPadding = PaddingValues(16.dp)
     ) {
-        items(data) { item ->
-            ListItem(text = item, onClick = { onItemSelect(item) })
+        items(data) { (text, imageResId) ->
+            ListItem(text = text, imageResId = imageResId, onClick = { onItemSelect(text) })
         }
     }
 }
 
 @Composable
-fun ListItem(text: String, onClick: () -> Unit) {
+fun ListItem(text: String, imageResId: Int, onClick: () -> Unit) {
     Card(
         modifier = Modifier
             .padding(8.dp)
@@ -122,6 +90,12 @@ fun ListItem(text: String, onClick: () -> Unit) {
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
+            Image(
+                painter = painterResource(id = imageResId),
+                contentDescription = "Image for $text",
+                modifier = Modifier.size(64.dp)
+            )
+            Spacer(Modifier.width(8.dp))
             Text(
                 text = text,
                 modifier = Modifier
@@ -153,37 +127,7 @@ fun AppNavigation() {
         }
     }
 }
-/*
-@Composable
-fun MyScreen() {
-    Scaffold(
-        floatingActionButton = {
-            FloatingActionButton(
-                onClick = { /* Do something! */ },
-                content = { Icon(Icons.Filled.Camera, contentDescription = "Camera") },
-                elevation = FloatingActionButtonDefaults.elevation(8.dp)
-            )
-        },
-        floatingActionButtonPosition = FabPosition.Center,
-        isFloatingActionButtonDocked = false
-    ) { paddingValues ->
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .padding(paddingValues)) {
-        }
-    }
-}
 
-@Composable
-fun FloatingButton(){
-    FloatingActionButton(
-        onClick = { /* Do something! */ },
-        content = { Icon(Icons.Filled.Camera, contentDescription = "Details") },
-        elevation = FloatingActionButtonDefaults.elevation(8.dp)
-    )
-    val onClick = { /* Do something */ }
-}
-*/
 @Composable
 fun DetailsScreen(itemId: String) {
     var isRunning by remember { mutableStateOf(false) }
@@ -236,9 +180,3 @@ fun DetailsScreen(itemId: String) {
         }
     }
 }
-
-val customStyle = TextStyle(
-    color = Color.Blue,
-    fontSize = 18.sp,
-    letterSpacing = 0.5.sp
-)
