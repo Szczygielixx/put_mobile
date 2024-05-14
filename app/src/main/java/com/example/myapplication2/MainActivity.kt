@@ -1,9 +1,9 @@
 package com.example.myapplication2
 
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.foundation.layout.PaddingValues
@@ -39,6 +39,7 @@ import android.content.res.Configuration
 import androidx.compose.runtime.*
 import androidx.compose.material.*
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Camera
 import kotlinx.coroutines.delay
 
@@ -52,6 +53,13 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
+/*
+@Composable
+fun openCamera() {
+    val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+    startActivity(intent)
+}
+*/
 
 @Composable
 fun MyComposeApp(navController: NavHostController) {
@@ -60,9 +68,10 @@ fun MyComposeApp(navController: NavHostController) {
     ResponsiveList(data = items, onItemSelect = { itemId ->
         navController.navigate("details/$itemId")
     })
+
     FloatingActionButton(
         onClick = { /* Do something! */ },
-        content = { Icon(Icons.Filled.Camera, contentDescription = "Details") },
+        content = { Icon(Icons.Filled.Add, contentDescription = "Details") },
         elevation = FloatingActionButtonDefaults.elevation(8.dp)
     )
 }
@@ -72,7 +81,6 @@ fun isPortrait(): Boolean {
     val configuration = LocalConfiguration.current
     return configuration.orientation == android.content.res.Configuration.ORIENTATION_PORTRAIT
 }
-
 @Composable
 fun isTablet(): Boolean {
     val configuration = LocalConfiguration.current
@@ -87,6 +95,8 @@ fun isLandscape(): Boolean {
     val configuration = LocalConfiguration.current
     return configuration.orientation == Configuration.ORIENTATION_LANDSCAPE
 }
+
+
 
 @Composable
 fun ResponsiveList(data: List<String>, onItemSelect: (String) -> Unit) {
@@ -139,10 +149,11 @@ fun AppNavigation() {
         }
         composable("details/{itemId}") { backStackEntry ->
             DetailsScreen(itemId = backStackEntry.arguments?.getString("itemId") ?: "No ID")
+            //openCamera()
         }
     }
 }
-
+/*
 @Composable
 fun MyScreen() {
     Scaffold(
@@ -153,7 +164,7 @@ fun MyScreen() {
                 elevation = FloatingActionButtonDefaults.elevation(8.dp)
             )
         },
-        floatingActionButtonPosition = FabPosition.End,
+        floatingActionButtonPosition = FabPosition.Center,
         isFloatingActionButtonDocked = false
     ) { paddingValues ->
         Box(modifier = Modifier
@@ -172,7 +183,7 @@ fun FloatingButton(){
     )
     val onClick = { /* Do something */ }
 }
-
+*/
 @Composable
 fun DetailsScreen(itemId: String) {
     var isRunning by remember { mutableStateOf(false) }
