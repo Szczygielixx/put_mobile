@@ -62,7 +62,7 @@ fun ListItem(trail: Trail, onClick: (String) -> Unit) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth(),
-        //elevation = 4.dp,
+       // elevation = 4.dp,
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(
@@ -105,5 +105,3 @@ fun ListItem(trail: Trail, onClick: (String) -> Unit) {
         }
     }
 }
-
-

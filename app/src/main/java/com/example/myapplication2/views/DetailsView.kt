@@ -16,6 +16,9 @@ import com.main_view_model.myapplication2.view_models.StopwatchState
 import kotlinx.coroutines.delay
 
 
+
+
+
 @Composable
 fun DetailsView(trailId: String, viewModel: MainViewModel) {
     val trail = viewModel.items.collectAsState().value.find { it.id == trailId }
@@ -61,6 +64,12 @@ fun DetailsView(trailId: String, viewModel: MainViewModel) {
                     .fillMaxWidth()
                     .aspectRatio(1.5f) // Adjust aspect ratio as needed
                     .padding(bottom = 16.dp)
+            )
+            Text(
+                text = trail.details,
+                fontSize = 18.sp,
+                textAlign = TextAlign.Justify,
+                modifier = Modifier.padding(bottom = 16.dp)
             )
             Text(
                 text = "Elapsed time: ${elapsed / 1_000_000_000} seconds and ${(elapsed / 1_000_000) % 1000} milliseconds",
