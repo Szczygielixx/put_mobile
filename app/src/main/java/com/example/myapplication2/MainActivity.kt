@@ -1,5 +1,6 @@
 package com.example.myapplication2
 
+import android.content.res.Configuration
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -37,8 +38,11 @@ import androidx.compose.runtime.*
 import androidx.compose.material.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import kotlinx.coroutines.delay
+import com.main_view_model.myapplication2.view_models.MainViewModel
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,13 +53,63 @@ class MainActivity : ComponentActivity() {
     }
 }
 @Composable
+fun ListItem(trail: Trail, onClick: (String) -> Unit) {
+    Card(
+        modifier = Modifier
+            .padding(8.dp)
+            .fillMaxWidth(),
+        elevation = 4.dp
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(8.dp)
+        ) {
+            Row(
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.Center,
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    text = trail.name,
+                    modifier = Modifier
+                        .weight(1f)
+                        .padding(start = 8.dp),
+                    fontSize = 24.sp, // Increase font size
+                    textAlign = TextAlign.Center, // Center the text
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = Color.Black
+                )
+                IconButton(
+                    onClick = { onClick(trail.id) },
+                    modifier = Modifier.size(48.dp) // Increase size of the IconButton
+                ) {
+                    Icon(
+                        Icons.Filled.Info,
+                        contentDescription = "Details",
+                        modifier = Modifier.size(36.dp) // Increase size of the Icon
+                    )
+                }
+            }
+            Spacer(Modifier.height(8.dp))
+            Image(
+                painter = painterResource(id = R.drawable.poland_flag), // Replace with the appropriate image resource
+                contentDescription = "Image for ${trail.name}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1.5f) // Adjust aspect ratio as needed
+            )
+        }
+    }
+}
+
+@Composable
 fun MyComposeApp(navController: NavHostController) {
     val viewModel: MainViewModel = viewModel()
     val items by viewModel.items.collectAsState()
-    // Assuming you have a list of pairs of text and image resource ids
-    val itemsWithImages = items.map { it to R.drawable.poland_flag } // Replace R.drawable.sample_image with the appropriate image resource
-    ResponsiveList(data = itemsWithImages, onItemSelect = { itemId ->
-        navController.navigate("details/$itemId")
+    ResponsiveList(data = items, onItemSelect = { trailId ->
+        navController.navigate("details/$trailId")
     })
 
     FloatingActionButton(
@@ -65,54 +119,22 @@ fun MyComposeApp(navController: NavHostController) {
     )
 }
 
-
 @Composable
-fun ResponsiveList(data: List<Pair<String, Int>>, onItemSelect: (String) -> Unit) {
+fun ResponsiveList(data: List<Trail>, onItemSelect: (String) -> Unit) {
+    val configuration = LocalConfiguration.current
+    val isPortrait = configuration.orientation == Configuration.ORIENTATION_PORTRAIT
+    val columns = if (isPortrait) 1 else 2
+
     LazyVerticalGrid(
-        columns = GridCells.Fixed(1),
+        columns = GridCells.Fixed(columns),
         contentPadding = PaddingValues(16.dp)
     ) {
-        items(data) { (text, imageResId) ->
-            ListItem(text = text, imageResId = imageResId, onClick = { onItemSelect(text) })
+        items(data) { trail ->
+            ListItem(trail = trail, onClick = { onItemSelect(trail.id) })
         }
     }
 }
 
-@Composable
-fun ListItem(text: String, imageResId: Int, onClick: () -> Unit) {
-    Card(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        elevation = 4.dp
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
-        ) {
-            Image(
-                painter = painterResource(id = imageResId),
-                contentDescription = "Image for $text",
-                modifier = Modifier.size(64.dp)
-            )
-            Spacer(Modifier.width(8.dp))
-            Text(
-                text = text,
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(start = 8.dp),
-                fontSize = 16.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                color = Color.Black
-            )
-            Spacer(Modifier.weight(1f))
-            IconButton(onClick = onClick) {
-                Icon(Icons.Filled.Info, contentDescription = "Details")
-            }
-        }
-    }
-}
 
 @Composable
 fun AppNavigation() {
@@ -121,33 +143,51 @@ fun AppNavigation() {
         composable("list") {
             MyComposeApp(navController)
         }
-        composable("details/{itemId}") { backStackEntry ->
-            DetailsScreen(itemId = backStackEntry.arguments?.getString("itemId") ?: "No ID")
-            //openCamera()
+        composable("details/{trailId}") { backStackEntry ->
+            DetailsScreen(trailId = backStackEntry.arguments?.getString("trailId") ?: "No ID")
         }
     }
 }
 
+
+
 @Composable
-fun DetailsScreen(itemId: String) {
-    var isRunning by remember { mutableStateOf(false) }
-    var startTime by remember { mutableStateOf(0L) }
-    var elapsed by remember { mutableStateOf(0L) }
+fun DetailsScreen(trailId: String) {
+    val viewModel: MainViewModel = viewModel()
+    val trail = viewModel.items.collectAsState().value.find { it.id == trailId }
+    val stopwatchState by viewModel.stopwatchState.collectAsState()
+
+    val currentStopwatchState = stopwatchState[trailId] ?: StopwatchState()
+    var isRunning by remember { mutableStateOf(currentStopwatchState.isRunning) }
+    var startTime by remember { mutableStateOf(currentStopwatchState.startTime) }
+    var elapsed by remember { mutableStateOf(currentStopwatchState.elapsed) }
 
     LaunchedEffect(isRunning) {
         if (isRunning) {
             startTime = System.nanoTime() - elapsed
             while (isRunning) {
                 elapsed = System.nanoTime() - startTime
+                viewModel.updateElapsed(trailId, elapsed)
                 delay(10L)
             }
         }
     }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.updateElapsed(trailId, elapsed)
+        }
+    }
+
     Column(
         modifier = Modifier.padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Text("Details for item $itemId")
+        if (trail != null) {
+            Text("Details for ${trail.name}")
+            Spacer(modifier = Modifier.height(16.dp))
+            Text(trail.details)
+        }
         Spacer(modifier = Modifier.height(16.dp))
         Text("Elapsed time: ${elapsed / 1_000_000_000} seconds and ${(elapsed / 1_000_000) % 1000} milliseconds")
         Spacer(modifier = Modifier.height(16.dp))
@@ -155,6 +195,7 @@ fun DetailsScreen(itemId: String) {
             Button(
                 onClick = {
                     isRunning = true
+                    viewModel.startStopwatch(trailId)
                 },
                 enabled = !isRunning
             ) {
@@ -164,6 +205,7 @@ fun DetailsScreen(itemId: String) {
             Button(
                 onClick = {
                     isRunning = false
+                    viewModel.stopStopwatch(trailId)
                 }
             ) {
                 Text("Stop")
@@ -173,6 +215,7 @@ fun DetailsScreen(itemId: String) {
                 onClick = {
                     isRunning = false
                     elapsed = 0L
+                    viewModel.resetStopwatch(trailId)
                 }
             ) {
                 Text("Reset")
@@ -180,3 +223,5 @@ fun DetailsScreen(itemId: String) {
         }
     }
 }
+
+

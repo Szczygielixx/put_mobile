@@ -6,9 +6,20 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+data class Trail(val id: String, val name: String, val details: String)
+
+data class StopwatchState(
+    val isRunning: Boolean = false,
+    val startTime: Long = 0L,
+    val elapsed: Long = 0L
+)
+
 class MainViewModel : ViewModel() {
-    private val _items = MutableStateFlow<List<String>>(emptyList())
-    val items: StateFlow<List<String>> = _items
+    private val _items = MutableStateFlow<List<Trail>>(emptyList())
+    val items: StateFlow<List<Trail>> = _items
+
+    private val _stopwatchState = MutableStateFlow<Map<String, StopwatchState>>(emptyMap())
+    val stopwatchState: StateFlow<Map<String, StopwatchState>> = _stopwatchState
 
     init {
         loadItems()
@@ -16,18 +27,40 @@ class MainViewModel : ViewModel() {
 
     private fun loadItems() {
         viewModelScope.launch {
-            _items.value = listOf(
-                "Szlak 1", "Szlak 2", "Szlak 3", "Szlak 4", "Szlak 5",
-                "Szlak 6", "Szlak 7", "Szlak 8", "Szlak 9", "Szlak 10",
-                "Szlak 11", "Szlak 12", "Szlak 13", "Szlak 14", "Szlak 15",
-                "Szlak 16", "Szlak 17", "Szlak 18", "Szlak 19", "Szlak 20",
-                "Szlak 21", "Szlak 22", "Szlak 23", "Szlak 24", "Szlak 25",
-                "Szlak 26", "Szlak 27", "Szlak 28", "Szlak 29", "Szlak 30",
-                "Szlak 31", "Szlak 32", "Szlak 33", "Szlak 34", "Szlak 35",
-                "Szlak 36", "Szlak 37", "Szlak 38", "Szlak 39", "Szlak 40",
-                "Szlak 41", "Szlak 42", "Szlak 43", "Szlak 44", "Szlak 45",
-                "Szlak 46", "Szlak 47", "Szlak 48", "Szlak 49", "Szlak 50"
-            )
+            _items.value = (1..50).map { i ->
+                Trail(
+                    id = i.toString(),
+                    name = "Szlak $i",
+                    details = "Opis szlaku $i"
+                )
+            }
+        }
+    }
+
+    fun startStopwatch(trailId: String) {
+        _stopwatchState.value = _stopwatchState.value.toMutableMap().apply {
+            val current = this[trailId] ?: StopwatchState()
+            this[trailId] = current.copy(isRunning = true, startTime = System.nanoTime() - current.elapsed)
+        }
+    }
+
+    fun stopStopwatch(trailId: String) {
+        _stopwatchState.value = _stopwatchState.value.toMutableMap().apply {
+            val current = this[trailId] ?: StopwatchState()
+            this[trailId] = current.copy(isRunning = false, elapsed = System.nanoTime() - current.startTime)
+        }
+    }
+
+    fun resetStopwatch(trailId: String) {
+        _stopwatchState.value = _stopwatchState.value.toMutableMap().apply {
+            this[trailId] = StopwatchState()
+        }
+    }
+
+    fun updateElapsed(trailId: String, elapsed: Long) {
+        _stopwatchState.value = _stopwatchState.value.toMutableMap().apply {
+            val current = this[trailId] ?: StopwatchState()
+            this[trailId] = current.copy(elapsed = elapsed)
         }
     }
 }
