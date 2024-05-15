@@ -28,6 +28,7 @@ import com.trail_model.myapplication2.models.Trail
 
 
 
+
 @Composable
 fun MainView(navController: NavController, viewModel: MainViewModel) {
     val items by viewModel.items.collectAsState()
@@ -62,7 +63,7 @@ fun ListItem(trail: Trail, onClick: (String) -> Unit) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth(),
-       // elevation = 4.dp,
+        //elevation = 4.dp,
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(
