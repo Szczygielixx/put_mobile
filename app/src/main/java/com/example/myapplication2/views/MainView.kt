@@ -11,7 +11,10 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.res.painterResource
 import androidx.navigation.NavController
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.grid.items
@@ -20,16 +23,11 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.sp
-import com.example.myapplication2.R
 import com.main_view_model.myapplication2.view_models.MainViewModel
-import com.main_view_model.myapplication2.view_models.Trail
+import com.trail_model.myapplication2.models.Trail
 
 @Composable
-fun MainView(navController: NavController, viewModel: MainViewModel = viewModel()) {
+fun MainView(navController: NavController, viewModel: MainViewModel) {
     val items by viewModel.items.collectAsState()
     ResponsiveList(data = items, onItemSelect = { trailId ->
         navController.navigate("details/$trailId")
@@ -96,7 +94,7 @@ fun ListItem(trail: Trail, onClick: (String) -> Unit) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Image(
-                painter = painterResource(id = R.drawable.poland_flag), // Replace with the appropriate image resource
+                painter = painterResource(id = trail.imageResId), // Użyj odpowiedniego zasobu obrazka
                 contentDescription = "Image for ${trail.name}",
                 modifier = Modifier
                     .fillMaxWidth()
@@ -105,5 +103,6 @@ fun ListItem(trail: Trail, onClick: (String) -> Unit) {
         }
     }
 }
+
 
 
