@@ -1,8 +1,5 @@
 package com.main_view_model.myapplication2.view_models
 
-
-
-
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication2.R
@@ -10,8 +7,6 @@ import com.trail_model.myapplication2.models.Trail
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
-
 
 data class StopwatchState(
     val isRunning: Boolean = false,
@@ -144,7 +139,8 @@ class MainViewModel : ViewModel() {
 
     fun resetStopwatch(trailId: String) {
         _stopwatchState.value = _stopwatchState.value.toMutableMap().apply {
-            this[trailId] = StopwatchState()
+            val current = this[trailId] ?: StopwatchState()
+            this[trailId] = current.copy(isRunning = false, startTime = 0L, elapsed = 0L)
         }
     }
 
@@ -173,3 +169,4 @@ class MainViewModel : ViewModel() {
         }
     }
 }
+

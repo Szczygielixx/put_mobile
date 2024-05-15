@@ -28,19 +28,24 @@ import com.trail_model.myapplication2.models.Trail
 
 
 
-
 @Composable
 fun MainView(navController: NavController, viewModel: MainViewModel) {
     val items by viewModel.items.collectAsState()
-    ResponsiveList(data = items, onItemSelect = { trailId ->
-        navController.navigate("details/$trailId")
-    })
 
-    FloatingActionButton(
-        onClick = { /* Do something! */ },
-        content = { Icon(Icons.Default.Add, contentDescription = "Details") },
-        elevation = FloatingActionButtonDefaults.elevation(8.dp)
-    )
+    Box(modifier = Modifier.fillMaxSize()) {
+        ResponsiveList(data = items, onItemSelect = { trailId ->
+            navController.navigate("details/$trailId")
+        })
+
+        FloatingActionButton(
+            onClick = { /* Do something! */ },
+            content = { Icon(Icons.Default.Add, contentDescription = "Details") },
+            elevation = FloatingActionButtonDefaults.elevation(8.dp),
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(16.dp)
+        )
+    }
 }
 
 @Composable
@@ -63,7 +68,7 @@ fun ListItem(trail: Trail, onClick: (String) -> Unit) {
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth(),
-        //elevation = 4.dp,
+       // elevation = 4.dp,
         shape = RoundedCornerShape(8.dp)
     ) {
         Column(

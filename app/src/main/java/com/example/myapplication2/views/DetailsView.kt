@@ -24,7 +24,6 @@ import com.utils.myapplication2.utils.formatElapsedTime
 import kotlinx.coroutines.delay
 
 
-
 @Composable
 fun DetailsView(trailId: String, viewModel: MainViewModel) {
     val trail = viewModel.items.collectAsState().value.find { it.id == trailId }
@@ -38,7 +37,7 @@ fun DetailsView(trailId: String, viewModel: MainViewModel) {
 
     LaunchedEffect(isRunning) {
         if (isRunning) {
-            startTime = System.nanoTime() - elapsed
+            startTime = currentStopwatchState.startTime
             while (isRunning) {
                 elapsed = System.nanoTime() - startTime
                 viewModel.updateElapsed(trailId, elapsed)
