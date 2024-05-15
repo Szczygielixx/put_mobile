@@ -4,6 +4,10 @@ package com.details_view.myapplication2.views
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -51,29 +55,57 @@ fun DetailsView(trailId: String, viewModel: MainViewModel) {
 
     if (trail != null) {
         if (configuration.orientation == Configuration.ORIENTATION_PORTRAIT) {
-            PortraitDetailsView(trail, elapsed, isRunning, onStart = {
-                isRunning = true
-                viewModel.startStopwatch(trailId)
-            }, onStop = {
-                isRunning = false
-                viewModel.stopStopwatch(trailId)
-            }, onReset = {
-                isRunning = false
-                elapsed = 0L
-                viewModel.resetStopwatch(trailId)
-            })
+            PortraitDetailsView(
+                trail,
+                elapsed,
+                isRunning,
+                currentStopwatchState.recordedTimes,
+                onStart = {
+                    isRunning = true
+                    viewModel.startStopwatch(trailId)
+                },
+                onStop = {
+                    isRunning = false
+                    viewModel.stopStopwatch(trailId)
+                },
+                onReset = {
+                    isRunning = false
+                    elapsed = 0L
+                    viewModel.resetStopwatch(trailId)
+                },
+                onSave = {
+                    viewModel.saveCurrentTime(trailId)
+                },
+                onDelete = { index ->
+                    viewModel.deleteTime(trailId, index)
+                }
+            )
         } else {
-            LandscapeDetailsView(trail, elapsed, isRunning, onStart = {
-                isRunning = true
-                viewModel.startStopwatch(trailId)
-            }, onStop = {
-                isRunning = false
-                viewModel.stopStopwatch(trailId)
-            }, onReset = {
-                isRunning = false
-                elapsed = 0L
-                viewModel.resetStopwatch(trailId)
-            })
+            LandscapeDetailsView(
+                trail,
+                elapsed,
+                isRunning,
+                currentStopwatchState.recordedTimes,
+                onStart = {
+                    isRunning = true
+                    viewModel.startStopwatch(trailId)
+                },
+                onStop = {
+                    isRunning = false
+                    viewModel.stopStopwatch(trailId)
+                },
+                onReset = {
+                    isRunning = false
+                    elapsed = 0L
+                    viewModel.resetStopwatch(trailId)
+                },
+                onSave = {
+                    viewModel.saveCurrentTime(trailId)
+                },
+                onDelete = { index ->
+                    viewModel.deleteTime(trailId, index)
+                }
+            )
         }
     }
 }
@@ -83,9 +115,12 @@ fun PortraitDetailsView(
     trail: Trail,
     elapsed: Long,
     isRunning: Boolean,
+    recordedTimes: List<Long>,
     onStart: () -> Unit,
     onStop: () -> Unit,
-    onReset: () -> Unit
+    onReset: () -> Unit,
+    onSave: () -> Unit,
+    onDelete: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -135,9 +170,35 @@ fun PortraitDetailsView(
                 Text("Stop")
             }
             Button(
-                onClick = onReset
+                onClick = onReset,
+                modifier = Modifier.padding(end = 8.dp)
             ) {
                 Text("Reset")
+            }
+            Button(
+                onClick = onSave
+            ) {
+                Text("Zapisz")
+            }
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        LazyColumn {
+            itemsIndexed(recordedTimes) { index, time ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Text(
+                        text = "${index + 1}. ${formatElapsedTime(time)}",
+                        fontSize = 18.sp
+                    )
+                    IconButton(onClick = { onDelete(index) }) {
+                        Icon(Icons.Default.Delete, contentDescription = "Delete")
+                    }
+                }
             }
         }
     }
@@ -148,9 +209,12 @@ fun LandscapeDetailsView(
     trail: Trail,
     elapsed: Long,
     isRunning: Boolean,
+    recordedTimes: List<Long>,
     onStart: () -> Unit,
     onStop: () -> Unit,
-    onReset: () -> Unit
+    onReset: () -> Unit,
+    onSave: () -> Unit,
+    onDelete: (Int) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -205,9 +269,35 @@ fun LandscapeDetailsView(
                     Text("Stop")
                 }
                 Button(
-                    onClick = onReset
+                    onClick = onReset,
+                    modifier = Modifier.padding(end = 8.dp)
                 ) {
                     Text("Reset")
+                }
+                Button(
+                    onClick = onSave
+                ) {
+                    Text("Zapisz")
+                }
+            }
+            Spacer(modifier = Modifier.height(16.dp))
+            LazyColumn {
+                itemsIndexed(recordedTimes) { index, time ->
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
+                    ) {
+                        Text(
+                            text = "${index + 1}. ${formatElapsedTime(time)}",
+                            fontSize = 18.sp
+                        )
+                        IconButton(onClick = { onDelete(index) }) {
+                            Icon(Icons.Default.Delete, contentDescription = "Delete")
+                        }
+                    }
                 }
             }
         }

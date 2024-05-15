@@ -16,7 +16,8 @@ import kotlinx.coroutines.launch
 data class StopwatchState(
     val isRunning: Boolean = false,
     val startTime: Long = 0L,
-    val elapsed: Long = 0L
+    val elapsed: Long = 0L,
+    val recordedTimes: List<Long> = emptyList()
 )
 
 class MainViewModel : ViewModel() {
@@ -37,77 +38,92 @@ class MainViewModel : ViewModel() {
                     id = "1",
                     name = "Szlak Orlich Gniazd",
                     details = "Szlak Orlich Gniazd to jeden z najbardziej malowniczych i popularnych szlaków turystycznych w Polsce, prowadzący przez ruiny średniowiecznych zamków.",
-                    imageResId = R.drawable.orle_gniazdo),
+                    imageResId = R.drawable.orle_gniazdo
+                ),
                 Trail(
                     id = "2",
                     name = "Główny Szlak Beskidzki",
-                    details = "Główny Szlak Beskidzki to najdłuższy szlak pieszy w polskich górach, biegnący przez najpiękniejsze partie Beskidów od Ustronia w Beskidzie Śląskim po Wołosate w Bieszczadach."
-                , imageResId = R.drawable.szlak_beskidzki),
+                    details = "Główny Szlak Beskidzki to najdłuższy szlak pieszy w polskich górach, biegnący przez najpiękniejsze partie Beskidów od Ustronia w Beskidzie Śląskim po Wołosate w Bieszczadach.",
+                    imageResId = R.drawable.szlak_beskidzki
+                ),
                 Trail(
                     id = "3",
                     name = "Szlak Piastowski",
-                    details = "Szlak Piastowski to trasa turystyczna prowadząca przez miejsca związane z początkami państwa polskiego, w tym Gniezno, Poznań, Kruszwicę i Biskupin."
-                , imageResId = R.drawable.piastowski),
+                    details = "Szlak Piastowski to trasa turystyczna prowadząca przez miejsca związane z początkami państwa polskiego, w tym Gniezno, Poznań, Kruszwicę i Biskupin.",
+                    imageResId = R.drawable.piastowski
+                ),
                 Trail(
                     id = "4",
                     name = "Główny Szlak Sudecki",
-                    details = "Główny Szlak Sudecki to szlak turystyczny przebiegający przez całe Sudety od Świeradowa-Zdroju do Prudnika, obejmujący najwyższe partie tych gór."
-                , imageResId = R.drawable.sudecki),
+                    details = "Główny Szlak Sudecki to szlak turystyczny przebiegający przez całe Sudety od Świeradowa-Zdroju do Prudnika, obejmujący najwyższe partie tych gór.",
+                    imageResId = R.drawable.sudecki
+                ),
                 Trail(
                     id = "5",
                     name = "Szlak Nadmorski",
-                    details = "Szlak Nadmorski to trasa turystyczna biegnąca wzdłuż polskiego wybrzeża Bałtyku, oferująca piękne widoki na morze, plaże i nadmorskie klify."
-                , imageResId = R.drawable.szlak_nadmorski),
+                    details = "Szlak Nadmorski to trasa turystyczna biegnąca wzdłuż polskiego wybrzeża Bałtyku, oferująca piękne widoki na morze, plaże i nadmorskie klify.",
+                    imageResId = R.drawable.szlak_nadmorski
+                ),
                 Trail(
                     id = "6",
                     name = "Szlak Zamków Gotyckich",
-                    details = "Szlak Zamków Gotyckich prowadzi przez północną Polskę, umożliwiając zwiedzanie imponujących zamków gotyckich, w tym Malborku, Lidzbarka Warmińskiego i Gniewu."
-                , imageResId = R.drawable.szlak_beskidzki),
+                    details = "Szlak Zamków Gotyckich prowadzi przez północną Polskę, umożliwiając zwiedzanie imponujących zamków gotyckich, w tym Malborku, Lidzbarka Warmińskiego i Gniewu.",
+                    imageResId = R.drawable.szlak_beskidzki
+                ),
                 Trail(
                     id = "7",
                     name = "Szlak Kopernikowski",
-                    details = "Szlak Kopernikowski to trasa turystyczna prowadząca przez miejsca związane z Mikołajem Kopernikiem, w tym Toruń, Frombork i Olsztyn."
-                , imageResId = R.drawable.piastowski),
+                    details = "Szlak Kopernikowski to trasa turystyczna prowadząca przez miejsca związane z Mikołajem Kopernikiem, w tym Toruń, Frombork i Olsztyn.",
+                    imageResId = R.drawable.piastowski
+                ),
                 Trail(
                     id = "8",
                     name = "Szlak Karpacki",
-                    details = "Szlak Karpacki to trasa biegnąca przez polskie Karpaty, oferująca piękne widoki na góry, doliny i malownicze wioski."
-                , imageResId = R.drawable.orle_gniazdo),
+                    details = "Szlak Karpacki to trasa biegnąca przez polskie Karpaty, oferująca piękne widoki na góry, doliny i malownicze wioski.",
+                    imageResId = R.drawable.orle_gniazdo
+                ),
                 Trail(
                     id = "9",
                     name = "Szlak Wokół Tatr",
-                    details = "Szlak Wokół Tatr to trasa rowerowa i piesza, która pozwala na zwiedzanie okolic Tatr zarówno po stronie polskiej, jak i słowackiej."
-                , imageResId = R.drawable.szlak_nadmorski),
+                    details = "Szlak Wokół Tatr to trasa rowerowa i piesza, która pozwala na zwiedzanie okolic Tatr zarówno po stronie polskiej, jak i słowackiej.",
+                    imageResId = R.drawable.szlak_nadmorski
+                ),
                 Trail(
                     id = "10",
                     name = "Szlak Papieski",
-                    details = "Szlak Papieski prowadzi przez miejsca związane z życiem i działalnością Jana Pawła II, w tym Wadowice, Kraków i Kalwarię Zebrzydowską."
-                , imageResId = R.drawable.sudecki),
+                    details = "Szlak Papieski prowadzi przez miejsca związane z życiem i działalnością Jana Pawła II, w tym Wadowice, Kraków i Kalwarię Zebrzydowską.",
+                    imageResId = R.drawable.sudecki
+                ),
                 Trail(
                     id = "11",
                     name = "Szlak Wielkich Jezior Mazurskich",
-                    details = "Szlak Wielkich Jezior Mazurskich to popularna trasa żeglarska prowadząca przez najpiękniejsze jeziora Mazur, idealna dla miłośników wodnych przygód."
-                , imageResId = R.drawable.piastowski),
+                    details = "Szlak Wielkich Jezior Mazurskich to popularna trasa żeglarska prowadząca przez najpiękniejsze jeziora Mazur, idealna dla miłośników wodnych przygód.",
+                    imageResId = R.drawable.piastowski
+                ),
                 Trail(
                     id = "12",
                     name = "Szlak Rzeki Biebrzy",
-                    details = "Szlak Rzeki Biebrzy to trasa turystyczna biegnąca wzdłuż rzeki Biebrzy, oferująca wyjątkowe widoki na unikalne bagna i rozlewiska."
-                , imageResId = R.drawable.szlak_beskidzki),
+                    details = "Szlak Rzeki Biebrzy to trasa turystyczna biegnąca wzdłuż rzeki Biebrzy, oferująca wyjątkowe widoki na unikalne bagna i rozlewiska.",
+                    imageResId = R.drawable.szlak_beskidzki
+                ),
                 Trail(
                     id = "13",
                     name = "Szlak Krutyni",
-                    details = "Szlak Krutyni to popularna trasa kajakowa prowadząca przez malownicze tereny Mazur, idealna dla miłośników przyrody i aktywnego wypoczynku."
-                , imageResId = R.drawable.orle_gniazdo),
+                    details = "Szlak Krutyni to popularna trasa kajakowa prowadząca przez malownicze tereny Mazur, idealna dla miłośników przyrody i aktywnego wypoczynku.",
+                    imageResId = R.drawable.orle_gniazdo
+                ),
                 Trail(
                     id = "14",
                     name = "Szlak Roztoczański",
-                    details = "Szlak Roztoczański to trasa biegnąca przez Roztocze, oferująca piękne widoki na pagórkowaty krajobraz, lasy i doliny."
-                , imageResId = R.drawable.sudecki),
+                    details = "Szlak Roztoczański to trasa biegnąca przez Roztocze, oferująca piękne widoki na pagórkowaty krajobraz, lasy i doliny.",
+                    imageResId = R.drawable.sudecki
+                ),
                 Trail(
                     id = "15",
                     name = "Szlak Gór Świętokrzyskich",
-                    details = "Szlak Gór Świętokrzyskich to trasa prowadząca przez najstarsze góry w Polsce, oferująca piękne widoki i możliwość zwiedzania licznych zabytków."
-                , imageResId = R.drawable.piastowski),
+                    details = "Szlak Gór Świętokrzyskich to trasa prowadząca przez najstarsze góry w Polsce, oferująca piękne widoki i możliwość zwiedzania licznych zabytków.",
+                    imageResId = R.drawable.piastowski
+                )
             )
         }
     }
@@ -136,6 +152,24 @@ class MainViewModel : ViewModel() {
         _stopwatchState.value = _stopwatchState.value.toMutableMap().apply {
             val current = this[trailId] ?: StopwatchState()
             this[trailId] = current.copy(elapsed = elapsed)
+        }
+    }
+
+    fun saveCurrentTime(trailId: String) {
+        _stopwatchState.value = _stopwatchState.value.toMutableMap().apply {
+            val current = this[trailId] ?: StopwatchState()
+            this[trailId] = current.copy(
+                recordedTimes = current.recordedTimes + current.elapsed
+            )
+        }
+    }
+
+    fun deleteTime(trailId: String, index: Int) {
+        _stopwatchState.value = _stopwatchState.value.toMutableMap().apply {
+            val current = this[trailId] ?: StopwatchState()
+            this[trailId] = current.copy(
+                recordedTimes = current.recordedTimes.toMutableList().apply { removeAt(index) }
+            )
         }
     }
 }
