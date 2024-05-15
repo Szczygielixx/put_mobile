@@ -26,6 +26,8 @@ import androidx.compose.ui.platform.LocalConfiguration
 import com.main_view_model.myapplication2.view_models.MainViewModel
 import com.trail_model.myapplication2.models.Trail
 
+
+
 @Composable
 fun MainView(navController: NavController, viewModel: MainViewModel) {
     val items by viewModel.items.collectAsState()
@@ -94,15 +96,14 @@ fun ListItem(trail: Trail, onClick: (String) -> Unit) {
             }
             Spacer(modifier = Modifier.height(8.dp))
             Image(
-                painter = painterResource(id = trail.imageResId), // Użyj odpowiedniego zasobu obrazka
+                painter = painterResource(id = trail.imageResId),
                 contentDescription = "Image for ${trail.name}",
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(1.5f) // Adjust aspect ratio as needed
+                    .aspectRatio(1.5f)
             )
         }
     }
 }
-
 
 

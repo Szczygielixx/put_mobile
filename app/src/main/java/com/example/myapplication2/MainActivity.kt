@@ -24,7 +24,6 @@ class MainActivity : ComponentActivity() {
         }
     }
 }
-
 @Composable
 fun AppNavigation(navController: NavHostController, viewModel: MainViewModel) {
     NavHost(navController = navController, startDestination = "list") {

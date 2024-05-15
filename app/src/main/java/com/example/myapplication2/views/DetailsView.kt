@@ -1,15 +1,20 @@
 package com.details_view.myapplication2.views
 
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.main_view_model.myapplication2.view_models.MainViewModel
 import com.main_view_model.myapplication2.view_models.StopwatchState
 import kotlinx.coroutines.delay
+
 
 @Composable
 fun DetailsView(trailId: String, viewModel: MainViewModel) {
@@ -43,41 +48,53 @@ fun DetailsView(trailId: String, viewModel: MainViewModel) {
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         if (trail != null) {
-            Text("Details for ${trail.name}")
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(trail.details)
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        Text("Elapsed time: ${elapsed / 1_000_000_000} seconds and ${(elapsed / 1_000_000) % 1000} milliseconds")
-        Spacer(modifier = Modifier.height(16.dp))
-        Row {
-            Button(
-                onClick = {
-                    isRunning = true
-                    viewModel.startStopwatch(trailId)
-                },
-                enabled = !isRunning
-            ) {
-                Text("Start")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = {
-                    isRunning = false
-                    viewModel.stopStopwatch(trailId)
+            Text(
+                text = trail.name,
+                fontSize = 24.sp,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Image(
+                painter = painterResource(id = trail.imageResId),
+                contentDescription = "Image for ${trail.name}",
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1.5f) // Adjust aspect ratio as needed
+                    .padding(bottom = 16.dp)
+            )
+            Text(
+                text = "Elapsed time: ${elapsed / 1_000_000_000} seconds and ${(elapsed / 1_000_000) % 1000} milliseconds",
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+            Row {
+                Button(
+                    onClick = {
+                        isRunning = true
+                        viewModel.startStopwatch(trailId)
+                    },
+                    enabled = !isRunning,
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Text("Start")
                 }
-            ) {
-                Text("Stop")
-            }
-            Spacer(modifier = Modifier.width(8.dp))
-            Button(
-                onClick = {
-                    isRunning = false
-                    elapsed = 0L
-                    viewModel.resetStopwatch(trailId)
+                Button(
+                    onClick = {
+                        isRunning = false
+                        viewModel.stopStopwatch(trailId)
+                    },
+                    modifier = Modifier.padding(end = 8.dp)
+                ) {
+                    Text("Stop")
                 }
-            ) {
-                Text("Reset")
+                Button(
+                    onClick = {
+                        isRunning = false
+                        elapsed = 0L
+                        viewModel.resetStopwatch(trailId)
+                    }
+                ) {
+                    Text("Reset")
+                }
             }
         }
     }
