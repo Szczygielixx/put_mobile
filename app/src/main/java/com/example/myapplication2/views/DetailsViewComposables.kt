@@ -1,32 +1,34 @@
 package com.details_view_composables.myapplication2.views
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material3.*
+import androidx.compose.ui.Modifier
+import androidx.compose.runtime.Composable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Icon
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.Stop
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.google.accompanist.pager.*
+import com.google.accompanist.pager.rememberPagerState
 import com.trail_model.myapplication2.models.Trail
 import com.utils.myapplication2.utils.formatElapsedTime
-import android.graphics.Bitmap
-import androidx.compose.foundation.lazy.items
-import androidx.compose.runtime.Composable
-import androidx.compose.ui.graphics.asImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 
-
-
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun PortraitDetailsView(
     trail: Trail,
@@ -47,16 +49,16 @@ fun PortraitDetailsView(
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        TrailDetailsHeader(trail)
+        ImageSlider(trail.imageResId, photos, onDeletePhoto)
+        TrailDetails(trail)
         StopwatchDisplay(elapsed)
         StopwatchControls(isRunning, onStart, onStop, onReset, onSave)
         Spacer(modifier = Modifier.height(16.dp))
         RecordedTimesList(recordedTimes, onDelete)
-        Spacer(modifier = Modifier.height(16.dp))
-        PhotosSection(photos, onDeletePhoto)
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
 fun LandscapeDetailsView(
     trail: Trail,
@@ -76,57 +78,29 @@ fun LandscapeDetailsView(
             .padding(16.dp)
             .fillMaxSize()
     ) {
-        Image(
-            painter = painterResource(id = trail.imageResId),
-            contentDescription = "Image for ${trail.name}",
-            modifier = Modifier
-                .weight(1f)
-                .aspectRatio(1.0f) // Adjust aspect ratio as needed
-                .padding(end = 16.dp)
-        )
+        ImageSlider(trail.imageResId, photos, onDeletePhoto, Modifier.weight(1f))
         Column(
             modifier = Modifier
                 .weight(1f)
                 .fillMaxHeight(),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            Text(
-                text = trail.name,
-                fontSize = 24.sp,
-                textAlign = TextAlign.Center,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-            Text(
-                text = trail.details,
-                fontSize = 18.sp,
-                textAlign = TextAlign.Justify,
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
+            TrailDetails(trail)
             StopwatchDisplay(elapsed)
             StopwatchControls(isRunning, onStart, onStop, onReset, onSave)
             Spacer(modifier = Modifier.height(16.dp))
             RecordedTimesList(recordedTimes, onDelete)
-            Spacer(modifier = Modifier.height(16.dp))
-            PhotosSection(photos, onDeletePhoto)
         }
     }
 }
 
 @Composable
-fun TrailDetailsHeader(trail: Trail) {
+fun TrailDetails(trail: Trail) {
     Text(
         text = trail.name,
         fontSize = 24.sp,
         textAlign = TextAlign.Center,
         modifier = Modifier.padding(bottom = 16.dp)
-    )
-    Image(
-        painter = painterResource(id = trail.imageResId),
-        contentDescription = "Image for ${trail.name}",
-        modifier = Modifier
-            .fillMaxWidth()
-            .aspectRatio(1.5f) // Adjust aspect ratio as needed
-            .padding(bottom = 16.dp)
     )
     Text(
         text = trail.details,
@@ -218,38 +192,52 @@ fun RecordedTimesList(recordedTimes: List<Long>, onDelete: (Int) -> Unit) {
     }
 }
 
+@OptIn(ExperimentalPagerApi::class)
 @Composable
-fun PhotosSection(photos: List<Bitmap>, onDeletePhoto: (Int) -> Unit) {
-    Column(
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Text(
-            text = "Zdjęcia ze szlaku",
-            fontSize = 18.sp,
-            modifier = Modifier.padding(vertical = 8.dp)
-        )
-        LazyColumn {
-            itemsIndexed(photos) { index, photo ->
-                Row(
+fun ImageSlider(
+    initialImageResId: Int,
+    photos: List<Bitmap>,
+    onDeletePhoto: (Int) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val pagerState = rememberPagerState()
+    val imageCount = photos.size + 1
+
+    Column(modifier = modifier) {
+        HorizontalPager(count = imageCount, state = pagerState) { page ->
+            if (page == 0) {
+                Image(
+                    painter = painterResource(id = initialImageResId),
+                    contentDescription = "Initial Image",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween
-                ) {
+                        .aspectRatio(1.5f) // Adjust aspect ratio as needed
+                )
+            } else {
+                val photoIndex = page - 1
+                Box {
                     Image(
-                        bitmap = photo.asImageBitmap(),
-                        contentDescription = "Trail photo",
+                        bitmap = photos[photoIndex].asImageBitmap(),
+                        contentDescription = "User Photo $photoIndex",
                         modifier = Modifier
-                            .weight(1f)
-                            .height(200.dp)
-                            .padding(end = 8.dp)
+                            .fillMaxWidth()
+                            .aspectRatio(1.5f) // Adjust aspect ratio as needed
                     )
-                    IconButton(onClick = { onDeletePhoto(index) }) {
-                        Icon(Icons.Default.Delete, contentDescription = "Delete")
+                    IconButton(
+                        onClick = { onDeletePhoto(photoIndex) },
+                        modifier = Modifier.align(Alignment.TopEnd)
+                    ) {
+                        Icon(Icons.Default.Delete, contentDescription = "Delete Photo")
                     }
                 }
             }
         }
+        HorizontalPagerIndicator(
+            pagerState = pagerState,
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(16.dp)
+        )
     }
 }
+
