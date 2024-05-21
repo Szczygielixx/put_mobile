@@ -1,6 +1,5 @@
 package com.details_view.myapplication2.views
 
-
 import android.content.res.Configuration
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
@@ -22,7 +21,9 @@ import com.main_view_model.myapplication2.view_models.StopwatchState
 import com.trail_model.myapplication2.models.Trail
 import com.utils.myapplication2.utils.formatElapsedTime
 import kotlinx.coroutines.delay
-
+import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.Stop
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun DetailsView(trailId: String, viewModel: MainViewModel) {
@@ -149,24 +150,36 @@ fun PortraitDetailsView(
         )
         Text(
             text = formatElapsedTime(elapsed),
+            fontSize = 48.sp,
             modifier = Modifier.padding(bottom = 16.dp)
         )
         Row(
             horizontalArrangement = Arrangement.SpaceEvenly,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Button(
+            IconButton(
                 onClick = onStart,
                 enabled = !isRunning,
                 modifier = Modifier.padding(end = 8.dp)
             ) {
-                Text("Start")
+                Icon(
+                    imageVector = Icons.Default.PlayArrow,
+                    contentDescription = "Start",
+                    tint = Color.Green,
+                    modifier = Modifier.size(36.dp)
+                )
             }
-            Button(
+            IconButton(
                 onClick = onStop,
+                enabled = isRunning,
                 modifier = Modifier.padding(end = 8.dp)
             ) {
-                Text("Stop")
+                Icon(
+                    imageVector = Icons.Default.Stop,
+                    contentDescription = "Stop",
+                    tint = Color.Red,
+                    modifier = Modifier.size(36.dp)
+                )
             }
             Button(
                 onClick = onReset,
@@ -248,24 +261,36 @@ fun LandscapeDetailsView(
             )
             Text(
                 text = formatElapsedTime(elapsed),
+                fontSize = 48.sp,
                 modifier = Modifier.padding(bottom = 16.dp)
             )
             Row(
                 horizontalArrangement = Arrangement.SpaceEvenly,
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Button(
+                IconButton(
                     onClick = onStart,
                     enabled = !isRunning,
                     modifier = Modifier.padding(end = 8.dp)
                 ) {
-                    Text("Start")
+                    Icon(
+                        imageVector = Icons.Default.PlayArrow,
+                        contentDescription = "Start",
+                        tint = Color.Green,
+                        modifier = Modifier.size(36.dp)
+                    )
                 }
-                Button(
+                IconButton(
                     onClick = onStop,
+                    enabled = isRunning,
                     modifier = Modifier.padding(end = 8.dp)
                 ) {
-                    Text("Stop")
+                    Icon(
+                        imageVector = Icons.Default.Stop,
+                        contentDescription = "Stop",
+                        tint = Color.Red,
+                        modifier = Modifier.size(36.dp)
+                    )
                 }
                 Button(
                     onClick = onReset,
