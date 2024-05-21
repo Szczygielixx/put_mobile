@@ -37,14 +37,6 @@ fun MainView(navController: NavController, viewModel: MainViewModel) {
             navController.navigate("details/$trailId")
         })
 
-        FloatingActionButton(
-            onClick = { /* Do something! */ },
-            content = { Icon(Icons.Default.Add, contentDescription = "Details") },
-            elevation = FloatingActionButtonDefaults.elevation(8.dp),
-            modifier = Modifier
-                .align(Alignment.BottomEnd)
-                .padding(16.dp)
-        )
     }
 }
 

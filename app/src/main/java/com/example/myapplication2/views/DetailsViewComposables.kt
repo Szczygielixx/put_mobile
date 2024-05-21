@@ -19,6 +19,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trail_model.myapplication2.models.Trail
 import com.utils.myapplication2.utils.formatElapsedTime
+import android.graphics.Bitmap
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.asImageBitmap
+
 
 
 @Composable
@@ -27,11 +33,13 @@ fun PortraitDetailsView(
     elapsed: Long,
     isRunning: Boolean,
     recordedTimes: List<Long>,
+    photos: List<Bitmap>,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onReset: () -> Unit,
     onSave: () -> Unit,
-    onDelete: (Int) -> Unit
+    onDelete: (Int) -> Unit,
+    onDeletePhoto: (Int) -> Unit
 ) {
     Column(
         modifier = Modifier
@@ -44,6 +52,8 @@ fun PortraitDetailsView(
         StopwatchControls(isRunning, onStart, onStop, onReset, onSave)
         Spacer(modifier = Modifier.height(16.dp))
         RecordedTimesList(recordedTimes, onDelete)
+        Spacer(modifier = Modifier.height(16.dp))
+        PhotosSection(photos, onDeletePhoto)
     }
 }
 
@@ -53,11 +63,13 @@ fun LandscapeDetailsView(
     elapsed: Long,
     isRunning: Boolean,
     recordedTimes: List<Long>,
+    photos: List<Bitmap>,
     onStart: () -> Unit,
     onStop: () -> Unit,
     onReset: () -> Unit,
     onSave: () -> Unit,
-    onDelete: (Int) -> Unit
+    onDelete: (Int) -> Unit,
+    onDeletePhoto: (Int) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -94,6 +106,8 @@ fun LandscapeDetailsView(
             StopwatchControls(isRunning, onStart, onStop, onReset, onSave)
             Spacer(modifier = Modifier.height(16.dp))
             RecordedTimesList(recordedTimes, onDelete)
+            Spacer(modifier = Modifier.height(16.dp))
+            PhotosSection(photos, onDeletePhoto)
         }
     }
 }
@@ -198,6 +212,42 @@ fun RecordedTimesList(recordedTimes: List<Long>, onDelete: (Int) -> Unit) {
                 )
                 IconButton(onClick = { onDelete(index) }) {
                     Icon(Icons.Default.Delete, contentDescription = "Delete")
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun PhotosSection(photos: List<Bitmap>, onDeletePhoto: (Int) -> Unit) {
+    Column(
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = "Zdjęcia ze szlaku",
+            fontSize = 18.sp,
+            modifier = Modifier.padding(vertical = 8.dp)
+        )
+        LazyColumn {
+            itemsIndexed(photos) { index, photo ->
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Image(
+                        bitmap = photo.asImageBitmap(),
+                        contentDescription = "Trail photo",
+                        modifier = Modifier
+                            .weight(1f)
+                            .height(200.dp)
+                            .padding(end = 8.dp)
+                    )
+                    IconButton(onClick = { onDeletePhoto(index) }) {
+                        Icon(Icons.Default.Delete, contentDescription = "Delete")
+                    }
                 }
             }
         }

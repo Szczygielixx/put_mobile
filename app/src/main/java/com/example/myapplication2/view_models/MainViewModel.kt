@@ -1,5 +1,6 @@
 package com.main_view_model.myapplication2.view_models
 
+import android.graphics.Bitmap
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication2.R
@@ -21,6 +22,9 @@ class MainViewModel : ViewModel() {
 
     private val _stopwatchState = MutableStateFlow<Map<String, StopwatchState>>(emptyMap())
     val stopwatchState: StateFlow<Map<String, StopwatchState>> = _stopwatchState
+
+    private val _photos = MutableStateFlow<Map<String, List<Bitmap>>>(emptyMap())
+    val photos: StateFlow<Map<String, List<Bitmap>>> = _photos
 
     init {
         loadItems()
@@ -166,6 +170,19 @@ class MainViewModel : ViewModel() {
             this[trailId] = current.copy(
                 recordedTimes = current.recordedTimes.toMutableList().apply { removeAt(index) }
             )
+        }
+    }
+    fun addPhoto(trailId: String, photo: Bitmap) {
+        _photos.value = _photos.value.toMutableMap().apply {
+            val currentPhotos = this[trailId] ?: emptyList()
+            this[trailId] = currentPhotos + photo
+        }
+    }
+
+    fun deletePhoto(trailId: String, index: Int) {
+        _photos.value = _photos.value.toMutableMap().apply {
+            val currentPhotos = this[trailId] ?: emptyList()
+            this[trailId] = currentPhotos.toMutableList().apply { removeAt(index) }
         }
     }
 }
