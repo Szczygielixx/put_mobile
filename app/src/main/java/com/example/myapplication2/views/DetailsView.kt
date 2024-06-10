@@ -49,7 +49,7 @@ fun DetailsView(trailId: String, viewModel: MainViewModel) {
         if (isGranted) {
             launcher.launch(null)
         } else {
-            // Handle permission denial here
+            //permissionnotgranted
         }
     }
 

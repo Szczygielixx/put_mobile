@@ -211,7 +211,7 @@ fun ImageSlider(
                     contentDescription = "Initial Image",
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(1.5f) // Adjust aspect ratio as needed
+                        .aspectRatio(1.5f)
                 )
             } else {
                 val photoIndex = page - 1
@@ -221,7 +221,7 @@ fun ImageSlider(
                         contentDescription = "User Photo $photoIndex",
                         modifier = Modifier
                             .fillMaxWidth()
-                            .aspectRatio(1.5f) // Adjust aspect ratio as needed
+                            .aspectRatio(1.5f)
                     )
                     IconButton(
                         onClick = { onDeletePhoto(photoIndex) },

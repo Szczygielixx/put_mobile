@@ -5,46 +5,57 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.tooling.preview.Preview
 import kotlinx.coroutines.delay
+import androidx.compose.animation.core.Animatable
+import androidx.compose.foundation.Canvas
+import androidx.compose.runtime.*
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.drawscope.translate
 
 @Composable
 fun SplashScreen(onSplashFinished: () -> Unit) {
     var visible by remember { mutableStateOf(true) }
+    val scale = remember { Animatable(3.0f) }
 
     LaunchedEffect(Unit) {
-        delay(3000)
+        delay(100)
+        scale.animateTo(
+            targetValue = 0.01f,
+            animationSpec = tween(durationMillis = 3000)
+        )
+        //delay(1000)
         visible = false
         onSplashFinished()
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primary),
-        contentAlignment = Alignment.Center
+    AnimatedVisibility(
+        visible = visible,
+        exit = fadeOut(animationSpec = tween(1000))
     ) {
-        AnimatedVisibility(
-            visible = visible,
-            enter = scaleIn(initialScale = 0.1f, animationSpec = tween(3000)),
-            exit = scaleOut(targetScale = 0.1f, animationSpec = tween(1000))
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color.Transparent)
         ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.White)
-            )
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                val canvasWidth = size.width
+                val canvasHeight = size.height
+
+                val radius = canvasWidth * scale.value / 2
+                val centerX = canvasWidth / 2
+                val centerY = canvasHeight / 2
+
+                translate(left = centerX - radius, top = centerY - radius) {
+                    drawRoundRect(
+                        color = Color.Green,
+                        size = Size(radius * 2, radius * 2),
+                        cornerRadius = CornerRadius(radius, radius)
+                    )
+                }
+            }
         }
     }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun SplashScreenPreview() {
-    SplashScreen(onSplashFinished = {})
 }

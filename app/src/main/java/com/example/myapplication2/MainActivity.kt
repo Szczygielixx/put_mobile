@@ -3,12 +3,9 @@ package com.example.myapplication2
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
+import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
@@ -17,19 +14,22 @@ import com.animation.myapplication2.utils.SplashScreen
 import com.details_view.myapplication2.views.DetailsView
 import com.main_view.myapplication2.views.MainView
 import com.main_view_model.myapplication2.view_models.MainViewModel
-
+import com.splash_view_model.myapplication2.view_models.SplashViewModel
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 
 class MainActivity : ComponentActivity() {
+    private val splashViewModel: SplashViewModel by viewModels()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            var splashFinished by remember { mutableStateOf(false) }
-
-            if (splashFinished) {
-                val navController = rememberNavController()
+            val navController = rememberNavController()
+            Box(modifier = Modifier.fillMaxSize()) {
                 AppNavigation(navController = navController, viewModel = MainViewModel())
-            } else {
-                SplashScreen(onSplashFinished = { splashFinished = true })
+                if (!splashViewModel.splashFinished) {
+                    SplashScreen(onSplashFinished = { splashViewModel.splashFinished = true })
+                }
             }
         }
     }
